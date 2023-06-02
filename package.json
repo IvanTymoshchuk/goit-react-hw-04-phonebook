@@ -1,8 +1,8 @@
 {
-  "name": "goit-react-hw-02-phonebook",
+  "name": "goit-react-hw-04-phonebook",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://IvanTymoshchuk.github.io/goit-react-hw-02-phonebook/",
+  "homepage": "https://IvanTymoshchuk.github.io/goit-react-hw-04-phonebook/",
   "dependencies": {
     "@ant-design/icons": "^5.1.1",
     "@emotion/react": "^11.11.0",
