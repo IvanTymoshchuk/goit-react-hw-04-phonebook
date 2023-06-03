@@ -1,49 +1,22 @@
-import React, { Component } from 'react';
-import shortid from 'shortid';
+import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import shortid from 'shortid';
 import initialContacts from './data/contacts.json';
+import useLocaleStorage from './hooks/useLocaleStorage';
 import Layout from './Layout/Layout';
 import GlobalTitle from './Layout/Title';
 import FormList from './FormList/FormList';
 import ContactList from './ContactList/ContactList';
 import Filter from './Filter/Filter';
+import { notifyOptions } from './notifyOptions/notifyOptions';
 
-const notifyOptions = {
-  position: 'bottom-left',
-  autoClose: 5000,
-  hideProgressBar: false,
-  closeOnClick: true,
-  pauseOnHover: true,
-  draggable: true,
-  progress: undefined,
-  theme: 'colored',
-};
+function App() {
+  const [contacts, setContacts] = useLocaleStorage('contacts', initialContacts);
+  const [filter, setFilter] = useState('');
 
-class App extends Component {
-  state = {
-    contacts: initialContacts,
-    filter: '',
-  };
-
-  componentDidMount() {
-    const contacts = localStorage.getItem('contacts');
-    const parsedContacts = JSON.parse(contacts);
-    if (parsedContacts) {
-      this.setState({ contacts: parsedContacts });
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { contacts } = this.state;
-    if (contacts !== prevState.contacts) {
-      localStorage.setItem('contacts', JSON.stringify(contacts));
-    }
-  }
-
-  addContact = ({ name, number }) => {
+  const addContact = ({ name, number }) => {
     const normalizedName = name.toLowerCase();
-    const { contacts } = this.state;
     const isAdded = contacts.find(
       el => el.name.toLowerCase() === normalizedName
     );
@@ -59,13 +32,10 @@ class App extends Component {
       number: number,
     };
 
-    this.setState(prevState => ({
-      contacts: [...prevState.contacts, contact],
-    }));
+    setContacts(prevState => [...prevState, contact]);
   };
 
-  getVisibleContacts = () => {
-    const { filter, contacts } = this.state;
+  const getVisibleContacts = () => {
     const normalizedFilter = filter.toLowerCase();
 
     return contacts.filter(contact =>
@@ -73,33 +43,28 @@ class App extends Component {
     );
   };
 
-  changeFilter = e => {
-    this.setState({ filter: e.currentTarget.value });
+  const changeFilter = e => {
+    setFilter(e.currentTarget.value);
   };
 
-  deleteContacts = contactId => {
-    this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
-    }));
-  };
-
-  render() {
-    const { filter } = this.state;
-    const visibleContacts = this.getVisibleContacts();
-    return (
-      <Layout>
-        <GlobalTitle title="Phonebook" />
-        <FormList onSubmit={this.addContact} />
-        <GlobalTitle title="Contacts" />
-        <Filter value={filter} onChange={this.changeFilter} />
-        <ContactList
-          contacts={visibleContacts}
-          onDelete={this.deleteContacts}
-        />
-        <ToastContainer />
-      </Layout>
+  const deleteContacts = contactId => {
+    setContacts(prevState =>
+      prevState.filter(contact => contact.id !== contactId)
     );
-  }
+  };
+
+  const visibleContacts = getVisibleContacts();
+
+  return (
+    <Layout>
+      <GlobalTitle title="Phonebook" />
+      <FormList onSubmit={addContact} />
+      <GlobalTitle title="Contacts" />
+      <Filter value={filter} onChange={changeFilter} />
+      <ContactList contacts={visibleContacts} onDelete={deleteContacts} />
+      <ToastContainer />
+    </Layout>
+  );
 }
 
 export default App;
