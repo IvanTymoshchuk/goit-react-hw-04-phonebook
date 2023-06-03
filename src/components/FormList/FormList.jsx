@@ -33,7 +33,7 @@ class FormList extends Component {
   render() {
     const { name, number } = this.state;
     return (
-      <Form onSubmit={this.handleSubmit} autoComplete="off">
+      <Form onSubmit={this.handleSubmit} >
         <Label>
           <Span>Name</Span>
           <Input

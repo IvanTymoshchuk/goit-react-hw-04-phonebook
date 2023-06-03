@@ -1,24 +1,23 @@
 import React from 'react';
-import { ListWrap, List, Paragraf } from './ContactList.styled';
+import { ListWrap, List } from './ContactList.styled';
 import { Button } from 'components/FormList/FormList.styled';
 import { UserDeleteOutlined } from '@ant-design/icons';
 // import PropTypes from 'prop-types';
 
 const ContactList = ({ contacts, onDelete }) => {
-  return(
+  return (
     <ListWrap>
-    {contacts.map(({ id, name, number }) => (
-      <List key={id}>
-        <Paragraf>{name}</Paragraf>
-        <Paragraf>{number}</Paragraf>
-        <Button type="button" onClick={() => onDelete(id)}>
-        <UserDeleteOutlined />
-        </Button>
-      </List>
-    ))}
-  </ListWrap>
-  )
-};
+      {contacts.map(({ id, name, number }) => (
+        <List key={id}>
+          {name + ' : ' + number}
 
+          <Button type="button" onClick={() => onDelete(id)}>
+            <UserDeleteOutlined />
+          </Button>
+        </List>
+      ))}
+    </ListWrap>
+  );
+};
 
 export default ContactList;

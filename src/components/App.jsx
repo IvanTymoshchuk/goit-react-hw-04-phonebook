@@ -26,25 +26,39 @@ class App extends Component {
     filter: '',
   };
 
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts');
+    const parsedContacts = JSON.parse(contacts);
+    if (parsedContacts) {
+      this.setState({ contacts: parsedContacts });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { contacts } = this.state;
+    if (contacts !== prevState.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(contacts));
+    }
+  }
+
   addContact = ({ name, number }) => {
     const normalizedName = name.toLowerCase();
-
-    let isAdded = false;
-    this.state.contacts.forEach(el => {
-      if (el.name.toLowerCase() === normalizedName) {
-        toast.error(`${name}: is already in contacts`, notifyOptions);
-        isAdded = true;
-      }
-    });
+    const { contacts } = this.state;
+    const isAdded = contacts.find(
+      el => el.name.toLowerCase() === normalizedName
+    );
 
     if (isAdded) {
+      toast.error(`${name}: is already in contacts`, notifyOptions);
       return;
     }
+
     const contact = {
       id: shortid.generate(),
       name: name,
       number: number,
     };
+
     this.setState(prevState => ({
       contacts: [...prevState.contacts, contact],
     }));
